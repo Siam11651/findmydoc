@@ -18,21 +18,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Widget? _body;
+  final Widget _body = const Center();
 
-  @override
-  void initState() async {
-    super.initState();
+  void _initStateAsync() async {
+    SharedPreferencesAsync prefs = SharedPreferencesAsync();
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userJson = prefs.getString('user');
+    String? userJson = await prefs.getString('user');
 
     if(userJson != null) {
       Map<String, String?> jsonMap = jsonDecode(userJson);
       String? id = jsonMap['id'];
 
       if(id != null) {
-        user = User(id, jsonMap['name'], jsonMap['image']);
+        user = User(
+          id: id,
+          name: jsonMap['name'],
+          imageUrl: jsonMap['image'],
+          idToken: jsonMap['token']
+        );
       }
     }
 
@@ -43,15 +46,28 @@ class _HomePageState extends State<HomePage> {
         Fluttertoast.showToast(msg: 'Signin to continue');
         SystemNavigator.pop();
       } else {
-        user = User(googleUser.id, googleUser.displayName, googleUser.photoUrl);
+        GoogleSignInAuthentication auth = await googleUser.authentication;
+        user = User(
+          id: googleUser.id,
+          name: googleUser.displayName,
+          imageUrl: googleUser.photoUrl,
+          idToken: auth.idToken
+        );
         Map<String, String?> jsonMap = {};
         jsonMap['id'] = googleUser.id;
         jsonMap['name'] = googleUser.displayName;
         jsonMap['image'] = googleUser.photoUrl;
+        jsonMap['token'] = auth.idToken;
 
         prefs.setString('user', jsonEncode(jsonMap));
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initStateAsync();
   }
 
   @override

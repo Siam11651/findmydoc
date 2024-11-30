@@ -1,7 +1,8 @@
 class User {
-  String id;
-  String? name;
-  String? imageUrl;
+  final String id;
+  final String? name;
+  final String? imageUrl;
+  final String? idToken;
 
-  User(this.id, this.name, this.imageUrl);
+  User({required this.id, this.name, this.imageUrl, this.idToken});
 }
