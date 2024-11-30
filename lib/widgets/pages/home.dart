@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icare/globals.dart';
 import 'package:icare/types.dart';
+import 'package:icare/widgets/start.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,7 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Widget _body = const Center();
+  Widget _body = const Center();
 
   void _initStateAsync() async {
     SharedPreferencesAsync prefs = SharedPreferencesAsync();
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     String? userJson = await prefs.getString('user');
 
     if(userJson != null) {
-      Map<String, String?> jsonMap = jsonDecode(userJson);
+      Map<String, dynamic> jsonMap = jsonDecode(userJson);
       String? id = jsonMap['id'];
 
       if(id != null) {
@@ -62,6 +63,10 @@ class _HomePageState extends State<HomePage> {
         prefs.setString('user', jsonEncode(jsonMap));
       }
     }
+
+    setState(() {
+      _body = const Start();
+    });
   }
 
   @override

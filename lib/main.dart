@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icare/widgets/pages/chat.dart';
 import 'package:icare/widgets/pages/home.dart';
 
 void main() {
@@ -19,6 +20,9 @@ class ICareApp extends StatelessWidget {
       routes: {
         '/': (context) {
           return const HomePage();
+        },
+        '/chat': (context) {
+          return const ChatPage();
         }
       },
     );
