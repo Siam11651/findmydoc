@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icare/globals.dart';
+import 'package:icare/types.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,37 +18,46 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Widget? _body;
+
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
-    if(user == null) {
-      GoogleSignIn signIn = GoogleSignIn();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
 
-      signIn.signIn().then((newUser) {
-        if(newUser != null) {
-          user = newUser;
-        } else {
-          Fluttertoast.showToast(msg: 'Signin to continue');
-          SystemNavigator.pop();
-        }
-      });
+    if(userJson != null) {
+      Map<String, String?> jsonMap = jsonDecode(userJson);
+      String? id = jsonMap['id'];
+
+      if(id != null) {
+        user = User(id, jsonMap['name'], jsonMap['image']);
+      }
+    }
+
+    if(user == null) {
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if(googleUser == null) {
+        Fluttertoast.showToast(msg: 'Signin to continue');
+        SystemNavigator.pop();
+      } else {
+        user = User(googleUser.id, googleUser.displayName, googleUser.photoUrl);
+        Map<String, String?> jsonMap = {};
+        jsonMap['id'] = googleUser.id;
+        jsonMap['name'] = googleUser.displayName;
+        jsonMap['image'] = googleUser.photoUrl;
+
+        prefs.setString('user', jsonEncode(jsonMap));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
-      ),
+    return Scaffold(
+      body: _body
     );
   }
 }
