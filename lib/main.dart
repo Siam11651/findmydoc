@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icare/widgets/pages/chat.dart';
 import 'package:icare/widgets/pages/home.dart';
+import 'package:icare/widgets/pages/map.dart';
 
 void main() {
   runApp(const ICareApp());
@@ -23,6 +24,9 @@ class ICareApp extends StatelessWidget {
         },
         '/chat': (context) {
           return const ChatPage();
+        },
+        '/map': (context) {
+          return const MapPage();
         }
       },
     );

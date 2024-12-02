@@ -38,6 +38,7 @@ dependencies:
   google_sign_in: ^6.2.2
   fluttertoast: ^8.2.8
   shared_preferences: ^2.3.3
+  google_maps_flutter: ^2.10.0
 
 dev_dependencies:
   flutter_test:

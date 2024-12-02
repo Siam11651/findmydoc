@@ -7,8 +7,14 @@ class Start extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Expanded(
-          child: Center(),
+        Expanded(
+          child: Center(
+            child: IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/map');
+              },
+              icon: const Icon(Icons.location_on)),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
