@@ -1,3 +1,3 @@
-import 'package:icare/types.dart';
+import 'package:find_my_doc/types.dart';
 
 User? user;

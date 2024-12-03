@@ -1,4 +1,4 @@
-package com.afif.icare
+package com.afif.findmydoc
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:icare/widgets/pages/chat.dart';
-import 'package:icare/widgets/pages/home.dart';
-import 'package:icare/widgets/pages/map.dart';
+import 'package:find_my_doc/widgets/pages/chat.dart';
+import 'package:find_my_doc/widgets/pages/home.dart';
+import 'package:find_my_doc/widgets/pages/map.dart';
 
 void main() {
-  runApp(const ICareApp());
+  runApp(const FindMyDocApp());
 }
 
-class ICareApp extends StatelessWidget {
-  const ICareApp({super.key});
+class FindMyDocApp extends StatelessWidget {
+  const FindMyDocApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:icare/globals.dart';
-import 'package:icare/types.dart';
-import 'package:icare/widgets/start.dart';
+import 'package:find_my_doc/globals.dart';
+import 'package:find_my_doc/types.dart';
+import 'package:find_my_doc/widgets/start.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,14 +32,14 @@ class _HomePageState extends State<HomePage> {
 
       if(id != null) {
         user = User(
-          id: id,
-          name: jsonMap['name'],
-          imageUrl: jsonMap['image'],
-          idToken: jsonMap['token']
+            id: id,
+            name: jsonMap['name'],
+            imageUrl: jsonMap['image'],
+            idToken: jsonMap['token']
         );
       }
     }
-
+  
     if(user == null) {
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
