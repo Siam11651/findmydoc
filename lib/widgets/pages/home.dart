@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:find_my_doc/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
             id: id,
             name: jsonMap['name'],
             imageUrl: jsonMap['image'],
-            idToken: jsonMap['token']
+            accToken: jsonMap['acc-token']
         );
       }
     }
@@ -52,16 +53,18 @@ class _HomePageState extends State<HomePage> {
           id: googleUser.id,
           name: googleUser.displayName,
           imageUrl: googleUser.photoUrl,
-          idToken: auth.idToken
+          accToken: auth.accessToken!
         );
         Map<String, String?> jsonMap = {};
         jsonMap['id'] = googleUser.id;
         jsonMap['name'] = googleUser.displayName;
         jsonMap['image'] = googleUser.photoUrl;
-        jsonMap['token'] = auth.idToken;
+        jsonMap['acc-token'] = auth.accessToken;
 
         prefs.setString('user', jsonEncode(jsonMap));
       }
+
+      register(user!.id, user!.accToken);
     }
 
     setState(() {

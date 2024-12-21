@@ -2,7 +2,7 @@ class User {
   final String id;
   final String? name;
   final String? imageUrl;
-  final String? idToken;
+  final String accToken;
 
-  User({required this.id, this.name, this.imageUrl, this.idToken});
+  User({required this.id, this.name, this.imageUrl, required this.accToken});
 }
