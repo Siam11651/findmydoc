@@ -16,6 +16,12 @@ class Start extends StatelessWidget {
               icon: const Icon(Icons.location_on)),
           ),
         ),
+        FilledButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/doctor');
+            },
+            child: const Text("I am a Doctor")
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(

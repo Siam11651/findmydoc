@@ -1,3 +1,4 @@
+import 'package:find_my_doc/widgets/pages/doctor.dart';
 import 'package:flutter/material.dart';
 import 'package:find_my_doc/widgets/pages/chat.dart';
 import 'package:find_my_doc/widgets/pages/home.dart';
@@ -27,6 +28,9 @@ class FindMyDocApp extends StatelessWidget {
         },
         '/map': (context) {
           return const MapPage();
+        },
+        '/doctor': (context) {
+          return const DoctorPage();
         }
       },
     );

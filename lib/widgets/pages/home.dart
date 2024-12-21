@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:find_my_doc/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -64,7 +63,7 @@ class _HomePageState extends State<HomePage> {
         prefs.setString('user', jsonEncode(jsonMap));
       }
 
-      register(user!.id, user!.accToken);
+    //   register(user!.id, user!.accToken);
     }
 
     setState(() {
