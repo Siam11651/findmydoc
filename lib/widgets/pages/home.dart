@@ -8,6 +8,7 @@ import 'package:find_my_doc/globals.dart';
 import 'package:find_my_doc/types.dart';
 import 'package:find_my_doc/widgets/start.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,16 +55,28 @@ class _HomePageState extends State<HomePage> {
           imageUrl: googleUser.photoUrl,
           accToken: auth.accessToken!
         );
-        Map<String, String?> jsonMap = {};
-        jsonMap['id'] = googleUser.id;
-        jsonMap['name'] = googleUser.displayName;
-        jsonMap['image'] = googleUser.photoUrl;
-        jsonMap['acc-token'] = auth.accessToken;
 
-        prefs.setString('user', jsonEncode(jsonMap));
+        var response = await http
+        .post(
+            Uri.parse('$APIHOST/register'),
+            body: jsonEncode({
+                'acc-token': GlobalState().user!.accToken,
+            })
+        );
+
+        if(response.statusCode == 200) {
+            Map<String, String?> jsonMap = {};
+            jsonMap['id'] = googleUser.id;
+            jsonMap['name'] = googleUser.displayName;
+            jsonMap['image'] = googleUser.photoUrl;
+            jsonMap['acc-token'] = auth.accessToken;
+
+            prefs.setString('user', jsonEncode(jsonMap));
+        } else {
+            Fluttertoast.showToast(msg: "Error registering");
+            SystemNavigator.pop();
+        }
       }
-
-    //   register(user!.id, user!.accToken);
     }
 
     setState(() {
