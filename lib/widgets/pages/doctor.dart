@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 
 void docLocOnstart(ServiceInstance service) {
     final timer = Timer.periodic(
-        const Duration(seconds: 5),
-        (timer) {
-            Fluttertoast.showToast(msg: "hehe");
+        const Duration(seconds: 30),
+        (timer) async {
+            Position position = await Geolocator.getCurrentPosition();
+
+            Fluttertoast.showToast(msg: "latitude: ${position.latitude}\nlongitude: ${position.longitude}");
         }
     );
 
@@ -64,7 +67,29 @@ class _DoctorPageState extends State<DoctorPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                                 const Text("Visible"),
-                                Switch(value: ready, onChanged: (newValue) {
+                                Switch(value: ready, onChanged: (newValue) async {
+                                    if(newValue) {
+                                        LocationPermission locationPermission = await Geolocator.checkPermission();
+
+                                        if(locationPermission == LocationPermission.denied) {
+                                            locationPermission = await Geolocator.requestPermission();
+
+                                            if(locationPermission == LocationPermission.denied) {
+                                                Fluttertoast.showToast(msg: "Need location permission");
+
+                                                return;
+                                            }
+                                        }
+
+                                        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+                                        if(!serviceEnabled) {
+                                            await Geolocator.openLocationSettings();
+
+                                            return;
+                                        }
+                                    }
+
                                     setState(() {
                                         ready = newValue;
 
