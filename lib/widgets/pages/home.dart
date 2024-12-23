@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       String? id = jsonMap['id'];
 
       if(id != null) {
-        user = User(
+        GlobalState().user = User(
             id: id,
             name: jsonMap['name'],
             imageUrl: jsonMap['image'],
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       }
     }
   
-    if(user == null) {
+    if(GlobalState().user == null) {
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if(googleUser == null) {
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
         SystemNavigator.pop();
       } else {
         GoogleSignInAuthentication auth = await googleUser.authentication;
-        user = User(
+        GlobalState().user = User(
           id: googleUser.id,
           name: googleUser.displayName,
           imageUrl: googleUser.photoUrl,
