@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:find_my_doc/globals.dart';
 import 'package:find_my_doc/widgets/ai_message.dart';
 import 'package:find_my_doc/widgets/user_message.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class _Message {
