@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:find_my_doc/globals.dart';
 import 'package:find_my_doc/widgets/ai_message.dart';
@@ -34,15 +35,24 @@ class _ChatPageState extends State<ChatPage> {
         super.initState();
     }
 
-    void updateWidget() {
+    void updateWidget({GlobalKey<AiMessageState>? key}) {
         setState(() {
             _messageWidgets.clear();
 
-            for(_Message message in _messages) {
-                if(message.type == 'user') {
-                    _messageWidgets.add(UserMessage(message.content));
-                } else if(message.type == 'ai') {
-                    _messageWidgets.add(AiMessage(message.content));
+            for(int i = 0; i < _messages.length; ++i) {
+                if(_messages[i].type == 'user') {
+                    _messageWidgets.add(UserMessage(_messages[i].content));
+                } else if(_messages[i].type == 'ai') {
+                    if(i == _messages.length - 1 && key != null) {
+                        _messageWidgets.add(
+                            AiMessage(
+                                _messages[i].content,
+                                key: key,
+                            )
+                        );
+                    } else {
+                        _messageWidgets.add(AiMessage(_messages[i].content));
+                    }
                 }
             }
         });
@@ -103,28 +113,53 @@ class _ChatPageState extends State<ChatPage> {
                                     _messages.add(_Message("user", _message));
                                     updateWidget();
 
-                                    final List<Map<String, dynamic>> messagedBody = List.filled(_messages.length, {
-                                        'type': '',
-                                        'content': ''
+                                    final List<Map<String, dynamic>> messagedBody = _messages.map((item) {
+                                        return {
+                                            'type': item.type,
+                                            'content': item.content
+                                        };
+                                    }).toList();
+
+                                    final request = http.Request(
+                                        'POST',
+                                        Uri.parse('$APIHOST/llm')
+                                    );
+                                    request.body = jsonEncode({
+                                        'messages': messagedBody,
+                                        'acc-token': GlobalState().user!.accToken
                                     });
 
-                                    for(int i = 0; i < _messages.length; ++i) {
-                                        messagedBody[i] = {
-                                            'type': _messages[i].type,
-                                            'content': _messages[i].content
-                                        };
-                                    }
+                                    request.headers.addAll({
+                                        'accept': 'text/event-stream'
+                                    });
 
-                                    http.post(
-                                        Uri.parse('$APIHOST/llm'),
-                                        body: jsonEncode({
-                                            'messages': messagedBody,
-                                            'acc-token': GlobalState().user!.accToken
-                                        })
-                                    ).then((response) {
+                                    final http.Client client = http.Client();
+                                    
+                                    client.send(request).then((response) {
                                         if(response.statusCode == 200) {
-                                            _messages.add(_Message('ai', jsonDecode(response.body)));
-                                            updateWidget();
+                                            _messages.add(_Message('ai', ''));
+
+                                            final GlobalKey<AiMessageState> aiMessageKey = GlobalKey<AiMessageState>();
+
+                                            updateWidget(
+                                                key: aiMessageKey
+                                            );
+
+                                            response
+                                                .stream
+                                                .transform(utf8.decoder)
+                                                .listen((data) {
+                                                    Map<String, dynamic> json = jsonDecode(data);
+
+                                                    if(json['type'] == 'part') {
+                                                        final String content = json['content'];
+                                                        _messages.last.content = '${_messages.last.content}$content';
+
+                                                        if(aiMessageKey.currentState != null) {
+                                                            aiMessageKey.currentState!.update(_messages.last.content);
+                                                        }
+                                                    }
+                                                });
                                         }
                                     });
                                 },

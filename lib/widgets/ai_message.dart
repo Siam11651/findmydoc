@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class AiMessage extends StatefulWidget {
@@ -21,9 +23,9 @@ class AiMessageState extends State<AiMessage> {
         message = widget._message;
     }
 
-    void update(String message) {
+    void update(String newMessage) {
         setState(() {
-          message = message;
+          message = newMessage;
         });
     }
 
