@@ -75,8 +75,9 @@ class DoctorPage extends StatefulWidget {
   }
 }
 
-class _DoctorPageState extends State<DoctorPage> {
-    bool ready = false;
+class _DoctorPageState extends State<DoctorPage> with RouteAware {
+    bool _ready = false;
+    bool _loading = true;
     FlutterBackgroundService service = FlutterBackgroundService();
 
     void _initService() {
@@ -93,17 +94,61 @@ class _DoctorPageState extends State<DoctorPage> {
         service.invoke("stop");
     }
 
+    void _checkDoctor() {
+        http.post(
+            Uri.parse('$APIHOST/is-doctor'),
+            body: jsonEncode({
+                'acc-token': GlobalState().user!.accToken
+            })
+        ).then((response) {
+            if(response.statusCode == 200) {
+                bool isDoctor = jsonDecode(response.body);
+
+                if(isDoctor) {
+                    setState(() {
+                        _loading = false;
+                    });
+                } else {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.pushNamed(context, "/register-doctor");
+                    });
+                }
+            }
+        });
+    }
+
+    @override
+    void didChangeDependencies() {
+        super.didChangeDependencies();
+        routeObserver.subscribe(this, ModalRoute.of(context)!);
+    }
+
     @override
     void initState() {
         super.initState();
         _destoryService();
+        _checkDoctor();
+    }
+
+    @override
+    void didPopNext() {
+        _checkDoctor();
+    }
+
+    @override
+    void dispose() {
+        routeObserver.unsubscribe(this);
+        _destoryService();
+        super.dispose();
     }
 
     @override
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: AppBar(),
-            body: Column(
+            body: _loading ? const Center(
+                child: CircularProgressIndicator(),
+            ) : Column(
                 children: [
                     Padding(
                         padding: const EdgeInsets.all(16),
@@ -112,7 +157,7 @@ class _DoctorPageState extends State<DoctorPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                                 const Text("Visible"),
-                                Switch(value: ready, onChanged: (newValue) async {
+                                Switch(value: _ready, onChanged: (newValue) async {
                                     if(newValue) {
                                         LocationPermission locationPermission = await Geolocator.checkPermission();
 
@@ -136,9 +181,9 @@ class _DoctorPageState extends State<DoctorPage> {
                                     }
 
                                     setState(() {
-                                        ready = newValue;
+                                        _ready = newValue;
 
-                                        if(ready) {
+                                        if(_ready) {
                                             _initService();
                                         } else {
                                             _destoryService();
@@ -152,10 +197,4 @@ class _DoctorPageState extends State<DoctorPage> {
             ),
         );
     }
-
-    @override
-  void dispose() {
-    _destoryService();
-    super.dispose();
-  }
 }

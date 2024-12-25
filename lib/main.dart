@@ -1,4 +1,6 @@
+import 'package:find_my_doc/globals.dart';
 import 'package:find_my_doc/widgets/pages/doctor.dart';
+import 'package:find_my_doc/widgets/pages/register_doctor.dart';
 import 'package:flutter/material.dart';
 import 'package:find_my_doc/widgets/pages/chat.dart';
 import 'package:find_my_doc/widgets/pages/home.dart';
@@ -19,6 +21,7 @@ class FindMyDocApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
+      navigatorObservers: [routeObserver],
       routes: {
         '/': (context) {
           return const HomePage();
@@ -31,6 +34,9 @@ class FindMyDocApp extends StatelessWidget {
         },
         '/doctor': (context) {
           return const DoctorPage();
+        },
+        '/register-doctor': (context) {
+            return const RegisterDoctorPage();
         }
       },
     );

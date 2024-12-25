@@ -57,12 +57,12 @@ class _HomePageState extends State<HomePage> {
         );
 
         var response = await http
-        .post(
-            Uri.parse('$APIHOST/register'),
-            body: jsonEncode({
-                'acc-token': GlobalState().user!.accToken,
-            })
-        );
+			.post(
+				Uri.parse('$APIHOST/register'),
+				body: jsonEncode({
+					'acc-token': GlobalState().user!.accToken,
+				})
+			);
 
         if(response.statusCode == 200) {
             Map<String, String?> jsonMap = {};
