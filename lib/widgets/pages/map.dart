@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class MapPage extends StatefulWidget {
     const MapPage({super.key});
@@ -41,12 +42,43 @@ class _MapPageState extends State<MapPage> {
             _doctorsMarkers.clear();
 
             for(int i = 0; i < doctors.length; ++i) {
-                Map<String, dynamic> doctor = doctors[i];
+                final Map<String, dynamic> doctor = doctors[i];
+                final String id = doctor['id'];
 
                 _doctorsMarkers.add(
                     Marker(
-                        markerId: MarkerId(doctor['id']),
-                        position: LatLng(doctor['latitude'], doctor['longitude'])
+                        markerId: MarkerId(id),
+                        position: LatLng(doctor['latitude'], doctor['longitude']),
+                        onTap: () {
+                            showMaterialModalBottomSheet(
+                                context: context,
+                                builder: (_) {
+                                    return SizedBox(
+                                        height: 500,
+                                        child: Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                    Text(
+                                                        id,
+                                                        style: const TextStyle(
+                                                            fontSize: 24
+                                                        ),
+                                                    ),
+                                                    FilledButton(
+                                                        onPressed: () {
+
+                                                        },
+                                                        child: const Text('Request Doctor')
+                                                    )
+                                                ],
+                                            ),
+                                        )
+                                    );
+                                },
+                            );
+                        }
                     )
                 );
             }
