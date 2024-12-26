@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:find_my_doc/globals.dart';
 import 'package:find_my_doc/widgets/ai_message.dart';
